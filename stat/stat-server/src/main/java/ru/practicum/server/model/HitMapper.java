@@ -1,4 +1,5 @@
 package ru.practicum.server.model;
+
 import ru.practicum.dto.HitDto;
 
 public class HitMapper {
