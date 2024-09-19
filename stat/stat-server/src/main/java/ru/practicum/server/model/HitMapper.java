@@ -1,6 +1,7 @@
 package ru.practicum.server.model;
 
 import ru.practicum.dto.HitDto;
+import ru.practicum.server.request.RequestHitDto;
 
 public class HitMapper {
     public static HitDto toHitDto(Hit hit) {
@@ -13,6 +14,7 @@ public class HitMapper {
 
         return hitDto;
     }
+
     public static Hit toHit(HitDto hitDto) {
         Hit hit = new Hit();
         hit.setId(hitDto.getId());
@@ -20,6 +22,16 @@ public class HitMapper {
         hit.setUri(hitDto.getUri());
         hit.setIp(hitDto.getIp());
         hit.setTimestamp(hitDto.getTimestamp());
+
+        return hit;
+    }
+
+    public static Hit toHit(RequestHitDto requestHitDto) {
+        Hit hit = new Hit();
+        hit.setApp(requestHitDto.getApp());
+        hit.setUri(requestHitDto.getUri());
+        hit.setIp(requestHitDto.getIp());
+        hit.setTimestamp(requestHitDto.getTimestamp());
 
         return hit;
     }
