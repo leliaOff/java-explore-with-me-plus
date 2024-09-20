@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.StatServer;
+import ru.practicum.server.helpers.DateTimeHelper;
 import ru.practicum.server.model.Hit;
 import ru.practicum.server.request.RequestHitDto;
 import ru.practicum.server.service.HitService;
@@ -38,6 +39,6 @@ public class HitServiceTest {
         assertThat(hit.getId(), notNullValue());
         assertThat(hit.getUri(), equalTo(request.getUri()));
         assertThat(hit.getIp(), equalTo(request.getIp()));
-        assertThat(hit.getTimestamp(), equalTo(request.getTimestamp()));
+        assertThat(hit.getTimestamp(), equalTo(DateTimeHelper.toInstant(request.getTimestamp())));
     }
 }

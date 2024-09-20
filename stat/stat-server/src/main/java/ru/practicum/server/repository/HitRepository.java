@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.server.model.Hit;
 import ru.practicum.server.model.Stat;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
             "AND hit.timestamp < :end " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")
-    List<Stat> getStat(@Param("start") String start, @Param("end") String end);
+    List<Stat> getStat(@Param("start") Instant start, @Param("end") Instant end);
 
     @Query("SELECT new ru.practicum.server.model.Stat(hit.app, hit.uri, count(hit.id))" +
             "FROM Hit as hit " +
@@ -25,7 +26,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
             "AND hit.uri IN :uris " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")
-    List<Stat> getStat(@Param("start") String start, @Param("end") String end, @Param("uris") Collection<String> uris);
+    List<Stat> getStat(@Param("start") Instant start, @Param("end") Instant end, @Param("uris") Collection<String> uris);
 
     @Query("SELECT new ru.practicum.server.model.Stat(hit.app, hit.uri, count(DISTINCT hit.ip))" +
             "FROM Hit as hit " +
@@ -33,7 +34,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
             "AND hit.timestamp < :end " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")
-    List<Stat> getUniqueStat(@Param("start") String start, @Param("end") String end);
+    List<Stat> getUniqueStat(@Param("start") Instant start, @Param("end") Instant end);
 
     @Query("SELECT new ru.practicum.server.model.Stat(hit.app, hit.uri, count(DISTINCT hit.ip))" +
             "FROM Hit as hit " +
@@ -42,5 +43,5 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
             "AND hit.uri IN :uris " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")
-    List<Stat> getUniqueStat(@Param("start") String start, @Param("end") String end, @Param("uris") Collection<String> uris);
+    List<Stat> getUniqueStat(@Param("start") Instant start, @Param("end") Instant end, @Param("uris") Collection<String> uris);
 }
