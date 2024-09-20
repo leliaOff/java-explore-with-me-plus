@@ -7,7 +7,6 @@ import ru.practicum.dto.HitDto;
 import ru.practicum.server.model.Hit;
 import ru.practicum.server.model.HitMapper;
 import ru.practicum.server.repository.HitRepository;
-import ru.practicum.server.request.RequestHitDto;
 
 @Service
 @Slf4j
@@ -19,8 +18,8 @@ public class HitService {
         this.repository = repository;
     }
 
-    public HitDto create(RequestHitDto request) {
-        Hit hit = HitMapper.toHit(request);
+    public HitDto create(HitDto dto) {
+        Hit hit = HitMapper.toHit(dto);
         hit = repository.save(hit);
         return HitMapper.toHitDto(hit);
     }

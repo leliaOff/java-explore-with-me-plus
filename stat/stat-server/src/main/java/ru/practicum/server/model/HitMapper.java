@@ -2,7 +2,6 @@ package ru.practicum.server.model;
 
 import ru.practicum.dto.HitDto;
 import ru.practicum.server.helpers.DateTimeHelper;
-import ru.practicum.server.request.RequestHitDto;
 
 public class HitMapper {
     public static HitDto toHitDto(Hit hit) {
@@ -23,16 +22,6 @@ public class HitMapper {
         hit.setUri(hitDto.getUri());
         hit.setIp(hitDto.getIp());
         hit.setTimestamp(DateTimeHelper.toInstant(hitDto.getTimestamp()));
-
-        return hit;
-    }
-
-    public static Hit toHit(RequestHitDto requestHitDto) {
-        Hit hit = new Hit();
-        hit.setApp(requestHitDto.getApp());
-        hit.setUri(requestHitDto.getUri());
-        hit.setIp(requestHitDto.getIp());
-        hit.setTimestamp(DateTimeHelper.toInstant(requestHitDto.getTimestamp()));
 
         return hit;
     }

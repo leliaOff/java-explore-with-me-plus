@@ -9,10 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.dto.HitDto;
 import ru.practicum.server.StatServer;
 import ru.practicum.server.helpers.DateTimeHelper;
 import ru.practicum.server.model.Hit;
-import ru.practicum.server.request.RequestHitDto;
 import ru.practicum.server.service.HitService;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -30,7 +30,7 @@ public class HitServiceTest {
 
     @Test
     void testCreate() {
-        RequestHitDto request = new RequestHitDto("test-app", "/app/test", "127.0.0.1", "2024-09-19 10:32:02");
+        HitDto request = new HitDto(null, "test-app", "/app/test", "127.0.0.1", "2024-09-19 10:32:02");
         service.create(request);
 
         TypedQuery<Hit> query = em.createQuery("Select hit from Hit hit where hit.app = :app", Hit.class);

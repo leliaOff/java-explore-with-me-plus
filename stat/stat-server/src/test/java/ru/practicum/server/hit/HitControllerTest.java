@@ -12,17 +12,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.dto.HitDto;
 import ru.practicum.server.controller.HitController;
-import ru.practicum.server.request.RequestHitDto;
 import ru.practicum.server.service.HitService;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class HitControllerTest {
@@ -37,7 +34,6 @@ public class HitControllerTest {
     private MockMvc mvc;
 
     private HitDto hitDto;
-    private RequestHitDto requestHitDto;
 
     @BeforeEach
     void setUp() {
@@ -45,7 +41,6 @@ public class HitControllerTest {
                 .standaloneSetup(controller)
                 .build();
         hitDto = new HitDto(1L, "test-app", "/app/test", "127.0.0.1", "2024-09-19 10:32:02");
-        requestHitDto = new RequestHitDto(hitDto.getApp(), hitDto.getUri(), hitDto.getIp(), hitDto.getTimestamp());
     }
 
     @Test
@@ -53,7 +48,7 @@ public class HitControllerTest {
         when(service.create(any())).thenReturn(hitDto);
 
         mvc.perform(post("/hit")
-                        .content(mapper.writeValueAsString(requestHitDto))
+                        .content(mapper.writeValueAsString(hitDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

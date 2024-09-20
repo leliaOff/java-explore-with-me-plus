@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.dto.HitDto;
-import ru.practicum.server.request.RequestHitDto;
 import ru.practicum.server.service.HitService;
 
 @RestController
@@ -20,7 +19,7 @@ public class HitController {
     }
 
     @PostMapping
-    public HitDto create(@RequestBody RequestHitDto request) {
-        return hitService.create(request);
+    public HitDto create(@RequestBody HitDto dto) {
+        return hitService.create(dto);
     }
 }

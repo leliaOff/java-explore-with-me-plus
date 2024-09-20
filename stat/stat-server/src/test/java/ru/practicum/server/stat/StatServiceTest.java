@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
 import ru.practicum.server.StatServer;
-import ru.practicum.server.request.RequestHitDto;
 import ru.practicum.server.service.HitService;
 import ru.practicum.server.service.StatService;
 
@@ -159,7 +159,7 @@ public class StatServiceTest {
     }
 
     private void createHit(String app, String uri, String ip, String timestamp) {
-        hitService.create(new RequestHitDto(app, uri, ip, timestamp));
+        hitService.create(new HitDto(null, app, uri, ip, timestamp));
     }
 
     private ArrayList<String> getUris() {
