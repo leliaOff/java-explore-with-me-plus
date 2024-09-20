@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.HitDto;
@@ -114,7 +113,6 @@ public class StatServiceTest {
         assertThat(result, hasItem(new StatDto("alpha", "/profile", 1L)));
         assertThat(result, hasItem(new StatDto("beta", "/profile", 2L)));
     }
-
 
 
     @Test

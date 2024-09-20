@@ -1,7 +1,6 @@
 package ru.practicum.dto;
 
 import jakarta.validation.constraints.NotBlank;
-
 import lombok.*;
 
 @Getter

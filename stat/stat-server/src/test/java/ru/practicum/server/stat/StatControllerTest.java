@@ -25,14 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 public class StatControllerTest {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Mock
     private StatService service;
-
     @InjectMocks
     private StatController controller;
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
     private MockMvc mvc;
 
     @BeforeEach
