@@ -1,5 +1,7 @@
 package ru.practicum.server.model;
+
 import ru.practicum.dto.HitDto;
+import ru.practicum.server.helpers.DateTimeHelper;
 
 public class HitMapper {
     public static HitDto toHitDto(Hit hit) {
@@ -8,17 +10,18 @@ public class HitMapper {
         hitDto.setApp(hit.getApp());
         hitDto.setUri(hit.getUri());
         hitDto.setIp(hit.getIp());
-        hitDto.setTimestamp(hit.getTimestamp());
+        hitDto.setTimestamp(DateTimeHelper.toString(hit.getTimestamp()));
 
         return hitDto;
     }
+
     public static Hit toHit(HitDto hitDto) {
         Hit hit = new Hit();
         hit.setId(hitDto.getId());
         hit.setApp(hitDto.getApp());
         hit.setUri(hitDto.getUri());
         hit.setIp(hitDto.getIp());
-        hit.setTimestamp(hitDto.getTimestamp());
+        hit.setTimestamp(DateTimeHelper.toInstant(hitDto.getTimestamp()));
 
         return hit;
     }

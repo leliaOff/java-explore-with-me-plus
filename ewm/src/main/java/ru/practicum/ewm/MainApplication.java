@@ -11,6 +11,6 @@ public class MainApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MainApplication.class, args);
         StatClient statClient = context.getBean(StatClient.class);
-        statClient.hit(new HitDto());
+        statClient.hit(new HitDto(null, "app", "uri", "ip", "2020-05-05 00:00:00"));
     }
 }

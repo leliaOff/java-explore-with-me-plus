@@ -3,6 +3,8 @@ package ru.practicum.server.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,5 +23,5 @@ public class Hit {
     @Column(name = "ip", nullable = false)
     private String ip;
     @Column(name = "created", nullable = false)
-    private String timestamp;
+    private Instant timestamp;
 }
