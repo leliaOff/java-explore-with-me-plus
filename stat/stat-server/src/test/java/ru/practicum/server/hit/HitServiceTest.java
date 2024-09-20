@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 @Transactional
 @WebAppConfiguration
-@ActiveProfiles("test")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(classes = StatServer.class)
 public class HitServiceTest {

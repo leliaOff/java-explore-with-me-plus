@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.hasSize;
 
 @Transactional
 @WebAppConfiguration
-@ActiveProfiles("test")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(classes = StatServer.class)
 public class StatServiceTest {
