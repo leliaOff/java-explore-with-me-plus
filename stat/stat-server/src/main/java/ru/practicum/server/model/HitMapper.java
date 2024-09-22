@@ -1,8 +1,10 @@
 package ru.practicum.server.model;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.dto.HitDto;
 import ru.practicum.server.helpers.DateTimeHelper;
 
+@UtilityClass
 public class HitMapper {
     public static HitDto toHitDto(Hit hit) {
         HitDto hitDto = new HitDto();
@@ -10,7 +12,7 @@ public class HitMapper {
         hitDto.setApp(hit.getApp());
         hitDto.setUri(hit.getUri());
         hitDto.setIp(hit.getIp());
-        hitDto.setTimestamp(DateTimeHelper.toString(hit.getTimestamp()));
+        hitDto.setTimestamp(hit.getTimestamp());
 
         return hitDto;
     }
@@ -21,7 +23,7 @@ public class HitMapper {
         hit.setApp(hitDto.getApp());
         hit.setUri(hitDto.getUri());
         hit.setIp(hitDto.getIp());
-        hit.setTimestamp(DateTimeHelper.toInstant(hitDto.getTimestamp()));
+        hit.setTimestamp(hitDto.getTimestamp());
 
         return hit;
     }

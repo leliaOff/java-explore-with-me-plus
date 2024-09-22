@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 public class StatClient {
-    RestClient restClient;
+    private final RestClient restClient;
 
     StatClient(@Value("${stat-server.url}") String serverUrl) {
         restClient = RestClient.create(serverUrl);

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -23,5 +24,5 @@ public class Hit {
     @Column(name = "ip", nullable = false)
     private String ip;
     @Column(name = "created", nullable = false)
-    private Instant timestamp;
+    private LocalDateTime timestamp;
 }
