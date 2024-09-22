@@ -10,7 +10,6 @@ import ru.practicum.dto.StatDto;
 import ru.practicum.server.service.StatService;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,9 +25,9 @@ public class StatController {
 
     @GetMapping
     public Collection<StatDto> get(@RequestParam("start")
-                                   @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                    @RequestParam("end")
-                                   @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                    @RequestParam(required = false) List<String> uris,
                                    @RequestParam(defaultValue = "false") Boolean unique) {
         return statService.get(start, end, uris, unique);
