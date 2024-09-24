@@ -2,9 +2,7 @@ package ru.practicum.ewm.mappers;
 
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.location.Location;
-import ru.practicum.ewm.enums.EventAdminStateAction;
 import ru.practicum.ewm.enums.EventState;
-import ru.practicum.ewm.enums.EventUserStateAction;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.models.Event;
 
@@ -85,7 +83,7 @@ public class EventMapper {
             model.setRequestModeration(dto.getRequestModeration());
         }
         if (dto.getStateAction() != null) {
-            model.setState(dto.getStateAction().equals(EventAdminStateAction.REJECT_EVENT) ? EventState.CANCELED : EventState.CONFIRMED);
+            model.setState(EventState.valueOf(dto.getStateAction().toString()));
         }
         return model;
     }
@@ -116,7 +114,7 @@ public class EventMapper {
             model.setRequestModeration(dto.getRequestModeration());
         }
         if (dto.getStateAction() != null) {
-            model.setState(dto.getStateAction().equals(EventUserStateAction.CANCEL_REVIEW) ? EventState.PENDING : EventState.CONFIRMED);
+            model.setState(EventState.valueOf(dto.getStateAction().toString()));
         }
         return model;
     }
