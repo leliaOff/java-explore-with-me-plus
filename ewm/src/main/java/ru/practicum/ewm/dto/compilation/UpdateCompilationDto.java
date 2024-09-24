@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class UpdateCompilationDto {
-    private Long id;
     private String title;
     private Boolean pinned;
     private List<Integer> events;

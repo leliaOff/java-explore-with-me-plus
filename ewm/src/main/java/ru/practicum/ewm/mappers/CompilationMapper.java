@@ -29,11 +29,13 @@ public class CompilationMapper {
         return model;
     }
 
-    public static Compilation toModel(UpdateCompilationDto dto) {
-        Compilation model = new Compilation();
-        model.setId(dto.getId());
-        model.setTitle(dto.getTitle());
-        model.setPinned(dto.getPinned());
+    public static Compilation mergeModel(Compilation model, UpdateCompilationDto dto) {
+        if (dto.getTitle() != null) {
+            model.setTitle(dto.getTitle());
+        }
+        if (dto.getPinned() != null) {
+            model.setPinned(dto.getPinned());
+        }
         return model;
     }
 }

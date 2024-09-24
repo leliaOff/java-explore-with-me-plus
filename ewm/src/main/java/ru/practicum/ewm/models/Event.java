@@ -58,4 +58,10 @@ public class Event {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EventState state = EventState.PENDING;
+
+    @Column
+    private Float lat;
+
+    @Column
+    private Float lon;
 }

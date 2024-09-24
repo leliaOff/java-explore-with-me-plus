@@ -1,6 +1,7 @@
 package ru.practicum.ewm.mappers;
 
 import ru.practicum.ewm.dto.event.*;
+import ru.practicum.ewm.dto.location.Location;
 import ru.practicum.ewm.enums.EventAdminStateAction;
 import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.enums.EventUserStateAction;
@@ -33,6 +34,7 @@ public class EventMapper {
                 model.getDescription(),
                 model.getEventDate(),
                 UserMapper.toShortDto(model.getInitiator()),
+                new Location(model.getLat(), model.getLon()),
                 model.getPaid(),
                 model.getParticipantLimit(),
                 model.getPublishedOn(),
@@ -52,6 +54,8 @@ public class EventMapper {
         model.setPaid(dto.getPaid());
         model.setParticipantLimit(dto.getParticipantLimit());
         model.setRequestModeration(dto.getRequestModeration());
+        model.setLat(dto.getLocation().getLat());
+        model.setLon(dto.getLocation().getLon());
         return model;
     }
 
