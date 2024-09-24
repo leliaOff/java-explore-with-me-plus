@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.enums.EventRequestStatus;
-import ru.practicum.ewm.enums.EventState;
 
 import java.time.LocalDateTime;
 

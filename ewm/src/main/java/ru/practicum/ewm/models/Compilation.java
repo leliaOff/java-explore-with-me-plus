@@ -13,20 +13,17 @@ import java.util.Collection;
 @NoArgsConstructor
 @Table(name = "compilations")
 public class Compilation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String title;
-
-    @Column
-    private Boolean pinned;
-
     @ManyToMany
     @JoinTable(
             name = "event_compilations",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     Collection<Event> events;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
+    private String title;
+    @Column
+    private Boolean pinned;
 }
