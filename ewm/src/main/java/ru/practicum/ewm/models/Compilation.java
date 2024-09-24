@@ -21,9 +21,6 @@ public class Compilation {
     private String title;
 
     @Column
-    private String description;
-
-    @Column
     private Boolean pinned;
 
     @ManyToMany

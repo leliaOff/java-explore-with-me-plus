@@ -1,6 +1,7 @@
 package ru.practicum.ewm.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "categories")
 public class Category {
     @Id
@@ -17,4 +19,8 @@ public class Category {
 
     @Column(nullable = false)
     private String name;
+
+    public Category(Long id) {
+        this.id = id;
+    }
 }
