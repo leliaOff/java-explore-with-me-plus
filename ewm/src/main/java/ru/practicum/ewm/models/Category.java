@@ -1,16 +1,14 @@
 package ru.practicum.ewm.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "categories")
 public class Category {
     @Id
@@ -23,4 +21,5 @@ public class Category {
     public Category(Long id) {
         this.id = id;
     }
+
 }
