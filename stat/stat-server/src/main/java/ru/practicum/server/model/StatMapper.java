@@ -5,7 +5,7 @@ import ru.practicum.dto.StatDto;
 
 @UtilityClass
 public class StatMapper {
-    public static StatDto toDto(Stat model) {
+    public StatDto toDto(Stat model) {
         StatDto dto = new StatDto();
         dto.setApp(model.getApp());
         dto.setUri(model.getUri());
