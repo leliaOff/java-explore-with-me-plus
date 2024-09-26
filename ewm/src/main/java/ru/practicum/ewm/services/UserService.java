@@ -40,4 +40,9 @@ public class UserService {
         userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " was not found"));
         userRepository.deleteById(id);
     }
+
+    public UserDto getUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " was not found"));
+        return UserMapper.toDto(user);
+    }
 }
