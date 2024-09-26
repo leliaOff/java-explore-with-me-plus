@@ -8,6 +8,8 @@ import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.models.User;
 
+import java.time.LocalDateTime;
+
 @UtilityClass
 public class EventMapper {
     public EventShortDto toShortDto(Event model, Integer view) {
@@ -58,6 +60,7 @@ public class EventMapper {
         model.setLat(dto.getLocation().getLat());
         model.setLon(dto.getLocation().getLon());
         model.setInitiator(user);
+        model.setCreatedOn(LocalDateTime.now());
         return model;
     }
 
