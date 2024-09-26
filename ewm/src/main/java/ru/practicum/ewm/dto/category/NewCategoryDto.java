@@ -1,5 +1,6 @@
 package ru.practicum.ewm.dto.category;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,5 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewCategoryDto {
+    @NotBlank
     private String name;
 }

@@ -1,5 +1,6 @@
 package ru.practicum.ewm.controllers.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class CategoryAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto createCategory(@RequestBody NewCategoryDto newCategoryDto) {
+    public CategoryDto createCategory(@RequestBody @Valid NewCategoryDto newCategoryDto) {
         return categoryService.addCategory(newCategoryDto);
     }
 
@@ -27,7 +28,7 @@ public class CategoryAdminController {
 
     @PatchMapping("/{catId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto updateCategory(@PathVariable Long catId, @RequestBody CategoryDto categoryDto) {
+    public CategoryDto updateCategory(@PathVariable Long catId, @RequestBody @Valid CategoryDto categoryDto) {
         return categoryService.updateCategory(categoryDto, catId);
     }
 }
