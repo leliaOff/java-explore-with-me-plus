@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.category.CategoryDto;
 import ru.practicum.ewm.dto.category.NewCategoryDto;
-import ru.practicum.ewm.exceptions.DataException;
+import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.CategoryMapper;
 import ru.practicum.ewm.models.Category;
@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Category not found"));
         if (eventRepository.existsByCategoryId(categoryId)) {
-            throw new DataException("Events in this category still exist");
+            throw new InvalidDataException("Events in this category still exist");
         }
 
         categoryRepository.deleteById(categoryId);
@@ -43,7 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(CategoryDto categoryDto, Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Category not found"));
         if (categoryRepository.existsByNameAndIdNot(categoryDto.getName(), categoryId)) {
-            throw new DataException("Category name already exists");
+            throw new InvalidDataException("Category name already exists");
         }
         category.setName(categoryDto.getName());
         categoryRepository.save(category);
