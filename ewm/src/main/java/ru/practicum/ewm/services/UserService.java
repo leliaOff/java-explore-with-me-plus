@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.practicum.ewm.dto.user.NewUserRequest;
 import ru.practicum.ewm.dto.user.UserDto;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.UserMapper;
 import ru.practicum.ewm.models.User;
 import ru.practicum.ewm.params.user.UserAdminParam;
