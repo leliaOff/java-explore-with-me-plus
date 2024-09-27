@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
@@ -31,16 +32,19 @@ public class StatClient {
                                   String end,
                                   List<String> uris,
                                   Boolean unique) {
-
-        return restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/stats")
-                        .queryParam("start", start)
-                        .queryParam("end", end)
-                        .queryParam("uris", uris)
-                        .queryParam("unique", unique)
-                        .build())
-                .retrieve().body(new ParameterizedTypeReference<>() {
-                });
+        try {
+            return restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/stats")
+                            .queryParam("start", start)
+                            .queryParam("end", end)
+                            .queryParam("uris", uris)
+                            .queryParam("unique", unique)
+                            .build())
+                    .retrieve().body(new ParameterizedTypeReference<>() {
+                    });
+        } catch (ResourceAccessException ignored) {
+        }
+        return List.of();
     }
 }

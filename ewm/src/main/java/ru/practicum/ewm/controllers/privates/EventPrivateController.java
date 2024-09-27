@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.event.EventFullDto;
 import ru.practicum.ewm.dto.event.EventShortDto;
 import ru.practicum.ewm.dto.event.NewEventDto;
+import ru.practicum.ewm.dto.event.UpdateEventUserRequest;
 import ru.practicum.ewm.services.EventService;
 
 import java.util.List;
@@ -17,9 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users/{userId}/events")
 public class EventPrivateController {
-    @Autowired
+
     private final EventService eventService;
 
+    @Autowired
     public EventPrivateController(EventService eventService) {
         this.eventService = eventService;
     }
@@ -42,4 +44,13 @@ public class EventPrivateController {
     EventFullDto getEvent(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId) {
         return eventService.getPrivateEvent(userId, eventId);
     }
+
+    @PatchMapping("{eventId}")
+    EventFullDto updateEvent(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId,
+                             @Valid @RequestBody UpdateEventUserRequest event) {
+
+        return eventService.updateEvent(userId, eventId, event);
+    }
+
+    //TODO add event request GET/PATCH
 }

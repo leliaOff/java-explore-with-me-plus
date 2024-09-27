@@ -4,6 +4,8 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.location.Location;
 import ru.practicum.ewm.enums.EventState;
+import ru.practicum.ewm.enums.EventUserStateAction;
+import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.models.User;
@@ -26,7 +28,7 @@ public class EventMapper {
         );
     }
 
-    public EventFullDto toDto(Event model, Integer view) {
+    public EventFullDto toDto(Event model, Long view) {
         return new EventFullDto(
                 model.getId(),
                 model.getTitle(),
@@ -121,7 +123,13 @@ public class EventMapper {
             model.setRequestModeration(dto.getRequestModeration());
         }
         if (dto.getStateAction() != null) {
-            model.setState(EventState.valueOf(dto.getStateAction().toString()));
+            if (dto.getStateAction().equals(EventUserStateAction.SEND_TO_REVIEW)) {
+                model.setState(EventState.PENDING);
+            } else if (dto.getStateAction().equals(EventUserStateAction.CANCEL_REVIEW)) {
+                model.setState(EventState.CANCELED);
+            } else {
+                throw new InvalidDataException(dto.getStateAction() + " is not supported");
+            }
         }
         return model;
     }
