@@ -64,4 +64,8 @@ public class Event {
 
     @Column
     private Float lon;
+
+    public Event(Long id) {
+        this.id = id;
+    }
 }
