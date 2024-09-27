@@ -1,13 +1,20 @@
 package ru.practicum.ewm.mappers;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.location.Location;
 import ru.practicum.ewm.enums.EventState;
+import ru.practicum.ewm.enums.EventUserStateAction;
+import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.models.Event;
+import ru.practicum.ewm.models.User;
 
+import java.time.LocalDateTime;
+
+@UtilityClass
 public class EventMapper {
-    public static EventShortDto toShortDto(Event model, Integer view) {
+    public EventShortDto toShortDto(Event model, Integer view) {
         return new EventShortDto(
                 model.getId(),
                 model.getTitle(),
@@ -21,7 +28,7 @@ public class EventMapper {
         );
     }
 
-    public static EventFullDto toDto(Event model, Integer view) {
+    public EventFullDto toDto(Event model, Long view) {
         return new EventFullDto(
                 model.getId(),
                 model.getTitle(),
@@ -42,7 +49,7 @@ public class EventMapper {
         );
     }
 
-    public static Event toModel(NewEventDto dto) {
+    public Event toModel(NewEventDto dto, User user) {
         Event model = new Event();
         model.setTitle(dto.getTitle());
         model.setAnnotation(dto.getAnnotation());
@@ -54,10 +61,12 @@ public class EventMapper {
         model.setRequestModeration(dto.getRequestModeration());
         model.setLat(dto.getLocation().getLat());
         model.setLon(dto.getLocation().getLon());
+        model.setInitiator(user);
+        model.setCreatedOn(LocalDateTime.now());
         return model;
     }
 
-    public static Event mergeModel(Event model, UpdateEventAdminRequest dto) {
+    public Event mergeModel(Event model, UpdateEventAdminRequest dto) {
         if (dto.getTitle() != null) {
             model.setTitle(dto.getTitle());
         }
@@ -114,7 +123,13 @@ public class EventMapper {
             model.setRequestModeration(dto.getRequestModeration());
         }
         if (dto.getStateAction() != null) {
-            model.setState(EventState.valueOf(dto.getStateAction().toString()));
+            if (dto.getStateAction().equals(EventUserStateAction.SEND_TO_REVIEW)) {
+                model.setState(EventState.PENDING);
+            } else if (dto.getStateAction().equals(EventUserStateAction.CANCEL_REVIEW)) {
+                model.setState(EventState.CANCELED);
+            } else {
+                throw new InvalidDataException(dto.getStateAction() + " is not supported");
+            }
         }
         return model;
     }

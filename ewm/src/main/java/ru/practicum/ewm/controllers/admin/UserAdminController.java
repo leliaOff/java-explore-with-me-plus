@@ -39,7 +39,7 @@ public class UserAdminController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteUser(@PathVariable  Long id) {
+    void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 }

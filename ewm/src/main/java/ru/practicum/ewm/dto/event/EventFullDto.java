@@ -35,5 +35,5 @@ public class EventFullDto {
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
     private EventState state;
-    private Integer views;
+    private Long views;
 }
