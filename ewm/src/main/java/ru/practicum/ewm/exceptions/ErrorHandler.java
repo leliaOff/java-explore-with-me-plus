@@ -51,7 +51,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({InvalidDataException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Error handlePSQLException(final InvalidDataException ex) {
+    public Error handleInvalidDataException(final InvalidDataException ex) {
         return Error.builder()
                 .status(HttpStatus.CONFLICT)
                 .reason("Integrity constraint has been violated.")
