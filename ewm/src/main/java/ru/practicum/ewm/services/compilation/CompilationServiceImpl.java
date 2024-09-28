@@ -10,33 +10,55 @@ import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.CompilationMapper;
 import ru.practicum.ewm.models.Compilation;
+import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repository.CompilationRepository;
+import ru.practicum.ewm.repository.EventRepository;
+
+import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
+    private final EventRepository eventRepository;
+
+    public CompilationDto find(Long compilationId) {
+        Optional<Compilation> optional = compilationRepository.findById(compilationId);
+        if (optional.isEmpty()) {
+            throw new NotFoundException("Compilation not found");
+        }
+        return CompilationMapper.toDto(optional.get());
+    }
 
     @Override
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
-        Compilation compilation = CompilationMapper.toModel(newCompilationDto);
+        Collection<Event> events = eventRepository.findByIdIn(newCompilationDto.getEvents());
+        if (newCompilationDto.getEvents().size() != events.size()) {
+            throw new InvalidDataException("One or more events not found");
+        }
+        Compilation compilation = CompilationMapper.toModel(newCompilationDto, events);
         compilation = compilationRepository.save(compilation);
         log.info("Compilation saved: {}", compilation);
-        return CompilationMapper.toDto(compilation);
+        return find(compilation.getId());
     }
 
     @Override
     public void deleteCompilation(Long compilationId) {
-        compilationRepository.findById(compilationId).orElseThrow(() -> new NotFoundException("Compilation not found"));
+        find(compilationId);
         compilationRepository.deleteById(compilationId);
         log.info("Compilation deleted, ID : {}", compilationId);
     }
 
     @Override
     public CompilationDto updateCompilation(UpdateCompilationRequest updateCompilationRequest, Long compilationId) {
+        Collection<Event> events = eventRepository.findByIdIn(updateCompilationRequest.getEvents());
+        if (updateCompilationRequest.getEvents().size() != events.size()) {
+            throw new InvalidDataException("One or more events not found");
+        }
         Compilation currentCompilation = compilationRepository.findById(compilationId).orElseThrow(() -> new NotFoundException("Compilation not found"));
-        Compilation compilation = CompilationMapper.mergeModel(currentCompilation, updateCompilationRequest);
+        Compilation compilation = CompilationMapper.mergeModel(currentCompilation, updateCompilationRequest, events);
         if (compilationRepository.existsByTitleAndIdNot(compilation.getTitle(), compilationId)) {
             throw new InvalidDataException("Compilation name already exists");
         }

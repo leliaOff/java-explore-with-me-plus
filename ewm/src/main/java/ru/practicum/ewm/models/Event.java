@@ -1,6 +1,7 @@
 package ru.practicum.ewm.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "events")
 public class Event {
     @Id
@@ -64,8 +66,4 @@ public class Event {
 
     @Column
     private Float lon;
-
-    public Event(Long id) {
-        this.id = id;
-    }
 }

@@ -27,25 +27,25 @@ public class CompilationMapper {
         );
     }
 
-    public static Compilation toModel(NewCompilationDto dto) {
+    public static Compilation toModel(NewCompilationDto dto, Collection<Event> events) {
         Compilation model = new Compilation();
         model.setTitle(dto.getTitle());
         model.setPinned(dto.getPinned() != null ? dto.getPinned() : false);
-        if (dto.getEvents() != null) {
-            model.setEvents(dto.getEvents().stream().map(Event::new).collect(Collectors.toList()));
+        if (!events.isEmpty()) {
+            model.setEvents(events);
         }
         return model;
     }
 
-    public static Compilation mergeModel(Compilation model, UpdateCompilationRequest dto) {
+    public static Compilation mergeModel(Compilation model, UpdateCompilationRequest dto, Collection<Event> events) {
         if (dto.getTitle() != null) {
             model.setTitle(dto.getTitle());
         }
         if (dto.getPinned() != null) {
             model.setPinned(dto.getPinned());
         }
-        if (!dto.getEvents().isEmpty()) {
-            model.setEvents(dto.getEvents().stream().map(Event::new).collect(Collectors.toList()));
+        if (!events.isEmpty()) {
+            model.setEvents(events);
         }
         return model;
     }
