@@ -14,7 +14,7 @@ import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.EventMapper;
 import ru.practicum.ewm.mappers.UserMapper;
 import ru.practicum.ewm.models.Event;
-import ru.practicum.ewm.repository.EventRepository;
+import ru.practicum.ewm.repositories.EventRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,13 +47,13 @@ public class EventService {
 
     public EventFullDto getPrivateEvent(Long userId, Long eventId) {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + eventId + " was not found"));
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         return EventMapper.toDto(event, getViews(event));
     }
 
-    public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventRequest) {
+    public EventFullDto updatePrivateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventRequest) {
         Event oldEvent = eventRepository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + eventId + " was not found"));
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         Event updatedEvent = EventMapper.mergeModel(oldEvent, updateEventRequest);
         return EventMapper.toDto(eventRepository.save(updatedEvent), getViews(oldEvent));
     }
