@@ -13,7 +13,7 @@ import ru.practicum.ewm.mappers.CompilationMapper;
 import ru.practicum.ewm.models.Compilation;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.EventRepository;
-import ru.practicum.ewm.repository.CompilationRepository;
+import ru.practicum.ewm.repositories.CompilationRepository;
 
 import java.util.Collection;
 import java.util.Optional;
