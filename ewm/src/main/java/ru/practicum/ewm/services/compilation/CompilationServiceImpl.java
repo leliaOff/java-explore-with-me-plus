@@ -2,6 +2,7 @@ package ru.practicum.ewm.services.compilation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.compilation.CompilationDto;
 import ru.practicum.ewm.dto.compilation.NewCompilationDto;
@@ -11,11 +12,12 @@ import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.CompilationMapper;
 import ru.practicum.ewm.models.Compilation;
 import ru.practicum.ewm.models.Event;
+import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.repository.CompilationRepository;
-import ru.practicum.ewm.repository.EventRepository;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +67,13 @@ public class CompilationServiceImpl implements CompilationService {
         compilation = compilationRepository.save(compilation);
         log.info("Compilation updated, ID : {}", compilationId);
         return CompilationMapper.toDto(compilation);
+    }
+
+    @Override
+    public Collection<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+        Collection<Compilation> compilations = pinned == null
+                ? compilationRepository.findAll(PageRequest.of(from / size, size)).stream().toList()
+                : compilationRepository.findByPinned(pinned, PageRequest.of(from / size, size));
+        return compilations.stream().map(CompilationMapper::toDto).collect(Collectors.toList());
     }
 }
