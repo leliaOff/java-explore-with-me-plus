@@ -13,7 +13,7 @@ import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.CategoryMapper;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.repository.CategoryRepository;
-import ru.practicum.ewm.repository.EventRepository;
+import ru.practicum.ewm.repositories.EventRepository;
 
 import java.util.ArrayList;
 import java.util.List;

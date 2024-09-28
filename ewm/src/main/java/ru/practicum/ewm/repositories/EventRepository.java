@@ -1,4 +1,4 @@
-package ru.practicum.ewm.repository;
+package ru.practicum.ewm.repositories;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;

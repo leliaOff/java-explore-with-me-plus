@@ -49,7 +49,7 @@ public class EventPrivateController {
     EventFullDto updateEvent(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId,
                              @Valid @RequestBody UpdateEventUserRequest event) {
 
-        return eventService.updateEvent(userId, eventId, event);
+        return eventService.updatePrivateEvent(userId, eventId, event);
     }
 
     //TODO add event request GET/PATCH
