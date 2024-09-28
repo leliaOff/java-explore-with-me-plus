@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UpdateCompilationDto {
+public class UpdateCompilationRequest {
     private String title;
     private Boolean pinned;
-    private List<Integer> events;
+    private List<Long> events;
 }
