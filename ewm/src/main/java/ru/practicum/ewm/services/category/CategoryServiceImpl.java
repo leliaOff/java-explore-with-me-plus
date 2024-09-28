@@ -12,7 +12,7 @@ import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.CategoryMapper;
 import ru.practicum.ewm.models.Category;
-import ru.practicum.ewm.repository.CategoryRepository;
+import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
 import java.util.ArrayList;
