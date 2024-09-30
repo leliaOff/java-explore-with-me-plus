@@ -16,9 +16,9 @@ import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.repositories.EventRepository.EventSpecification.*;
 
@@ -83,7 +83,12 @@ public class EventService {
                 PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "eventDate"))
         ).toList();
         HashMap<Long, Long> views = statEventService.getViews(events);
-        return events.stream().map(event -> EventMapper.toShortDto(event, views.get(event.getId())))
-                .collect(Collectors.toList());
+        Collection<EventShortDto> eventShortDtoCollection = events.stream()
+                .map(event -> EventMapper.toShortDto(event, views.get(event.getId())))
+                .toList();
+        if (sort.equals(EventSort.VIEWS)) {
+            return eventShortDtoCollection.stream().sorted(Comparator.comparing(EventShortDto::getViews)).toList();
+        }
+        return eventShortDtoCollection;
     }
 }
