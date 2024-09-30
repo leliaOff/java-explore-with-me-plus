@@ -15,6 +15,7 @@ import ru.practicum.ewm.repositories.RequestRepository;
 import ru.practicum.ewm.repositories.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,7 +33,7 @@ public class RequestService {
 
     @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id=" + eventId + " was not found"));
+        User user = getUser(userId);
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId))
             throw new InvalidDataException("Request already exist");
@@ -54,5 +55,22 @@ public class RequestService {
         }
 
         return EventRequestMapper.toDto(requestRepository.save(eventRequest));
+    }
+
+    public List<ParticipationRequestDto> getRequests(Long userId) {
+        getUser(userId);
+        return EventRequestMapper.toDto(requestRepository.findAllByRequesterId(userId));
+    }
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
+    }
+
+    public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
+        EventRequest request = requestRepository.findByRequesterIdAndId(userId, requestId)
+                .orElseThrow(() -> new NotFoundException("Request with id=" + requestId + " was not found"));
+        request.setStatus(EventRequestStatus.CANCELLED);
+        return EventRequestMapper.toDto(requestRepository.save(request));
     }
 }
