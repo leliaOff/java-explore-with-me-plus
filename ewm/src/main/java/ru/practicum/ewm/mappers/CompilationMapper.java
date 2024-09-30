@@ -9,14 +9,15 @@ import ru.practicum.ewm.models.Event;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class CompilationMapper {
-    public static CompilationDto toDto(Compilation model) {
+    public static CompilationDto toDto(Compilation model, HashMap<Long, Long> views) {
         Collection<EventShortDto> events = new ArrayList<>();
         if (model.getEvents() != null) {
             events = model.getEvents().stream()
-                    .map(event -> EventMapper.toShortDto(event, 0))
+                    .map(event -> EventMapper.toShortDto(event, views.get(event.getId())))
                     .collect(Collectors.toList());
         }
         return new CompilationDto(

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @UtilityClass
 public class EventMapper {
-    public EventShortDto toShortDto(Event model, Integer view) {
+    public EventShortDto toShortDto(Event model, Long view) {
         return new EventShortDto(
                 model.getId(),
                 model.getTitle(),
