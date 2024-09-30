@@ -2,8 +2,13 @@ package ru.practicum.ewm.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.dto.eventRequest.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm.dto.eventRequest.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.eventRequest.ParticipationRequestDto;
 import ru.practicum.ewm.enums.EventRequestStatus;
+import ru.practicum.ewm.enums.EventState;
+import ru.practicum.ewm.exceptions.BadRequestException;
+import ru.practicum.ewm.exceptions.ConflictException;
 import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.EventRequestMapper;
@@ -34,7 +39,7 @@ public class RequestService {
     @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
         User user = getUser(userId);
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        Event event = getEvent(eventId);
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId))
             throw new InvalidDataException("Request already exist");
         if (event.getInitiator().getId().equals(userId)) {
@@ -67,10 +72,53 @@ public class RequestService {
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
     }
 
+    private Event getEvent(Long eventId) {
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+    }
+
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         EventRequest request = requestRepository.findByRequesterIdAndId(userId, requestId)
                 .orElseThrow(() -> new NotFoundException("Request with id=" + requestId + " was not found"));
         request.setStatus(EventRequestStatus.CANCELLED);
         return EventRequestMapper.toDto(requestRepository.save(request));
+    }
+
+    public List<ParticipationRequestDto> getPrivateRequests(Long userId, Long eventId) {
+        return EventRequestMapper.toDto(requestRepository.findAllByEventIdWithInitiatorId(eventId, userId));
+    }
+
+    public EventRequestStatusUpdateResult updateEventRequestStatus(Long userId, Long eventId,
+                                                                   EventRequestStatusUpdateRequest updateRequest) {
+        Event event = getEvent(eventId);
+        EventRequestStatusUpdateResult updateResult = new EventRequestStatusUpdateResult();
+        if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
+            return updateResult;
+        }
+
+        List<EventRequest> eventRequests = requestRepository.findAllByEventIdWithInitiatorId(eventId, userId);
+        if (eventRequests.isEmpty()) {
+            return updateResult;
+        }
+
+        List<EventRequest> requestUpdateList = eventRequests.stream()
+                .filter(eventRequest -> updateRequest.getRequestIds().contains(eventRequest.getId())).toList();
+        requestUpdateList.forEach(eventRequest -> {
+            if (!eventRequest.getEvent().getState().equals(EventState.PENDING)) {
+                throw new BadRequestException("Request must have status PENDING");
+            }
+            if (event.getConfirmedRequests() > event.getParticipantLimit()) {
+                eventRequest.setStatus(EventRequestStatus.REJECTED);
+                updateResult.getRejectedRequests().add(EventRequestMapper.toDto(eventRequest));
+                requestRepository.save(eventRequest);
+                throw new ConflictException("The participant limit has been reached");
+            }
+            eventRequest.setStatus(updateRequest.getStatus());
+            updateResult.getConfirmedRequests().add(EventRequestMapper.toDto(eventRequest));
+            requestRepository.save(eventRequest);
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+        });
+        eventRepository.save(event);
+        return updateResult;
     }
 }
