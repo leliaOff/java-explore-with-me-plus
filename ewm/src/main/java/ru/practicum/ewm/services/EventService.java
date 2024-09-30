@@ -5,8 +5,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.dto.StatDto;
-import ru.practicum.ewm.client.StatClient;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.enums.EventSort;
@@ -17,9 +15,8 @@ import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,17 +28,17 @@ public class EventService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final UserService userService;
-    private final StatClient statClient;
+    private final StatEventService statEventService;
 
     public EventService(CategoryRepository categoryRepository,
                         EventRepository eventRepository,
                         UserService userService,
-                        StatClient statClient
+                        StatEventService statEventService
     ) {
         this.categoryRepository = categoryRepository;
         this.eventRepository = eventRepository;
         this.userService = userService;
-        this.statClient = statClient;
+        this.statEventService = statEventService;
     }
 
     @Transactional
@@ -53,26 +50,26 @@ public class EventService {
 
     public List<EventShortDto> getPrivateEvents(Long userId, PageRequest request) {
         List<Event> events = eventRepository.findAllByInitiatorId(userId, request);
-        return events.stream().map(event -> EventMapper.toShortDto(event, 0)).toList();
+        return events.stream().map(event -> EventMapper.toShortDto(event, statEventService.getViews(event))).toList();
     }
 
     public EventFullDto getPrivateEvent(Long userId, Long eventId) {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        return EventMapper.toDto(event, getViews(event));
+        return EventMapper.toDto(event, statEventService.getViews(event));
     }
 
     public EventFullDto updatePrivateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventRequest) {
         Event oldEvent = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         Event updatedEvent = EventMapper.mergeModel(oldEvent, updateEventRequest);
-        return EventMapper.toDto(eventRepository.save(updatedEvent), getViews(oldEvent));
+        return EventMapper.toDto(eventRepository.save(updatedEvent), statEventService.getViews(oldEvent));
     }
 
     public EventFullDto find(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        return EventMapper.toDto(event, getViews(event));
+        return EventMapper.toDto(event, statEventService.getViews(event));
     }
 
     public Collection<EventShortDto> getEvents(EventFilterDto filter, EventSort sort, Integer from, Integer size) {
@@ -85,17 +82,8 @@ public class EventService {
         Collection<Event> events = eventRepository.findAll(specification,
                 PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "eventDate"))
         ).toList();
-        return events.stream().map(event -> EventMapper.toShortDto(event, 0)).collect(Collectors.toList());
+        HashMap<Long, Long> views = statEventService.getViews(events);
+        return events.stream().map(event -> EventMapper.toShortDto(event, views.get(event.getId())))
+                .collect(Collectors.toList());
     }
-
-    private Long getViews(Event event) {
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        List<StatDto> stats = statClient.getStats(event.getCreatedOn().format(pattern),
-                LocalDateTime.now().format(pattern), List.of("/events/" + event.getId()), false
-        );
-        if (stats.isEmpty())
-            return 0L;
-        else return stats.getFirst().getHits();
-    }
-
 }

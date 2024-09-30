@@ -12,8 +12,9 @@ import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.CompilationMapper;
 import ru.practicum.ewm.models.Compilation;
 import ru.practicum.ewm.models.Event;
-import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.repositories.CompilationRepository;
+import ru.practicum.ewm.repositories.EventRepository;
+import ru.practicum.ewm.services.StatEventService;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -25,13 +26,14 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final StatEventService statEventService;
 
     public CompilationDto find(Long compilationId) {
         Optional<Compilation> optional = compilationRepository.findById(compilationId);
         if (optional.isEmpty()) {
             throw new NotFoundException("Compilation not found");
         }
-        return CompilationMapper.toDto(optional.get());
+        return getCompilationWithEventViews(optional.get());
     }
 
     @Override
@@ -66,7 +68,7 @@ public class CompilationServiceImpl implements CompilationService {
         }
         compilation = compilationRepository.save(compilation);
         log.info("Compilation updated, ID : {}", compilationId);
-        return CompilationMapper.toDto(compilation);
+        return getCompilationWithEventViews(compilation);
     }
 
     @Override
@@ -74,6 +76,11 @@ public class CompilationServiceImpl implements CompilationService {
         Collection<Compilation> compilations = pinned == null
                 ? compilationRepository.findAll(PageRequest.of(from / size, size)).stream().toList()
                 : compilationRepository.findByPinned(pinned, PageRequest.of(from / size, size));
-        return compilations.stream().map(CompilationMapper::toDto).collect(Collectors.toList());
+        return compilations.stream().map(this::getCompilationWithEventViews).collect(Collectors.toList());
+    }
+
+    private CompilationDto getCompilationWithEventViews(Compilation compilation) {
+        Collection<Event> events = compilation.getEvents();
+        return CompilationMapper.toDto(compilation, statEventService.getViews(events));
     }
 }
