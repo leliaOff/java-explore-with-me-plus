@@ -1,7 +1,9 @@
 package ru.practicum.ewm.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
 import ru.practicum.ewm.client.StatClient;
 import ru.practicum.ewm.models.Event;
@@ -19,9 +21,15 @@ public class StatEventService {
     private final StatClient statClient;
 
     private final DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final String appName;
 
-    public StatEventService(StatClient statClient) {
+    public StatEventService(StatClient statClient, @Value("${app.name}") String appName) {
         this.statClient = statClient;
+        this.appName = appName;
+    }
+
+    public void hit(String uri, String ip) {
+        statClient.hit(new HitDto(this.appName, uri, ip, LocalDateTime.now()));
     }
 
     public Long getViews(Event event) {
