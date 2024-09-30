@@ -1,6 +1,7 @@
 package ru.practicum.ewm.services;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.enums.EventSort;
+import ru.practicum.ewm.enums.EventState;
+import ru.practicum.ewm.exceptions.ConflictException;
+import ru.practicum.ewm.exceptions.ForbiddenException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.EventMapper;
 import ru.practicum.ewm.mappers.UserMapper;
@@ -15,10 +19,12 @@ import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.repositories.EventRepository.EventSpecification.*;
 
@@ -91,4 +97,39 @@ public class EventService {
         }
         return eventShortDtoCollection;
     }
+
+
+    public List<EventFullDto> getAdminEvents(EventAdminFilterDto filter) {
+        Pageable pageable = PageRequest.of(filter.getFrom(), filter.getSize());
+
+        List<Event> events = eventRepository.findAllByFilters(
+                filter.getUsers(),
+                filter.getStates(),
+                filter.getCategories(),
+                filter.getRangeStart(),
+                filter.getRangeEnd(),
+                pageable
+        );
+
+        return events.stream()
+                .map(EventMapper::toDtoWithoutViews)
+                .collect(Collectors.toList());
+    }
+
+    public EventFullDto updateAdminEvent(Long eventId,UpdateEventAdminRequest updateAdminRequest) {
+        Event oldEvent = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+
+        if (updateAdminRequest.getEventDate() != null) {
+
+            LocalDateTime eventDate = updateAdminRequest.getEventDate();
+
+            if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
+                throw new ForbiddenException("Больше, чем за час");
+            }
+
+        }
+        return null;
+    }
+
 }
