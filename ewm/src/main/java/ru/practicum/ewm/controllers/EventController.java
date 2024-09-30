@@ -25,7 +25,7 @@ public class EventController {
                                                @RequestParam(required = false) LocalDateTime rangeStart,
                                                @RequestParam(required = false) LocalDateTime rangeEnd,
                                                @RequestParam(required = false) Boolean onlyAvailable,
-                                               @RequestParam(required = false) EventSort sort,
+                                               @RequestParam(defaultValue = "EVENT_DATE") EventSort sort,
                                                @RequestParam(defaultValue = "0") Integer from,
                                                @RequestParam(defaultValue = "10") Integer size) {
         return eventService.getEvents(new EventFilterDto(text, categories, paid, rangeStart, rangeEnd, onlyAvailable),
