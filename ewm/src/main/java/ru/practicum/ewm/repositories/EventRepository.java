@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.models.Event;
 
@@ -21,6 +22,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     List<Event> findAllByInitiatorId(Long userId, PageRequest request);
 
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
+
+    Optional<Event> findByIdAndState(Long eventId, EventState state);
 
     @Query("SELECT event FROM Event event WHERE event.id IN (:ids)")
     List<Event> findByIdIn(@Param("ids") Collection<Long> ids);
@@ -77,6 +80,15 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
                     return null;
                 }
                 return criteriaBuilder.equal(root.get("onlyAvailable"), onlyAvailable);
+            });
+        }
+
+        static Specification<Event> byState(EventState state) {
+            return ((root, query, criteriaBuilder) -> {
+                if (state == null) {
+                    return null;
+                }
+                return criteriaBuilder.equal(root.get("state"), state);
             });
         }
     }

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.enums.EventSort;
+import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.EventMapper;
 import ru.practicum.ewm.mappers.UserMapper;
@@ -67,8 +68,8 @@ public class EventService {
     }
 
     public EventFullDto find(Long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
+                .orElseThrow(() -> new NotFoundException("Published event with id=" + eventId + " was not found"));
         return EventMapper.toDto(event, statEventService.getViews(event));
     }
 
@@ -78,7 +79,8 @@ public class EventService {
                 .and(byPaid(filter.getPaid()))
                 .and(byRangeStart(filter.getRangeStart()))
                 .and(byRangeEnd(filter.getRangeEnd()))
-                .and(byOnlyAvailable(filter.getOnlyAvailable()));
+                .and(byOnlyAvailable(filter.getOnlyAvailable()))
+                .and(byState(EventState.PUBLISHED));
         Collection<Event> events = eventRepository.findAll(specification,
                 PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "eventDate"))
         ).toList();
