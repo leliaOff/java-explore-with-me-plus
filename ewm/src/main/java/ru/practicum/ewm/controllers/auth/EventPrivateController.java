@@ -10,7 +10,11 @@ import ru.practicum.ewm.dto.event.EventFullDto;
 import ru.practicum.ewm.dto.event.EventShortDto;
 import ru.practicum.ewm.dto.event.NewEventDto;
 import ru.practicum.ewm.dto.event.UpdateEventUserRequest;
+import ru.practicum.ewm.dto.eventRequest.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm.dto.eventRequest.EventRequestStatusUpdateResult;
+import ru.practicum.ewm.dto.eventRequest.ParticipationRequestDto;
 import ru.practicum.ewm.services.EventService;
+import ru.practicum.ewm.services.RequestService;
 
 import java.util.List;
 
@@ -20,10 +24,12 @@ import java.util.List;
 public class EventPrivateController {
 
     private final EventService eventService;
+    private final RequestService requestService;
 
     @Autowired
-    public EventPrivateController(EventService eventService) {
+    public EventPrivateController(EventService eventService, RequestService requestService) {
         this.eventService = eventService;
+        this.requestService = requestService;
     }
 
     @PostMapping
@@ -52,5 +58,15 @@ public class EventPrivateController {
         return eventService.updatePrivateEvent(userId, eventId, event);
     }
 
-    //TODO add event request GET/PATCH
+    @GetMapping("/{eventId}/requests")
+    List<ParticipationRequestDto> getEventRequests(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId) {
+        return requestService.getPrivateRequests(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/requests")
+    EventRequestStatusUpdateResult updateEventRequestsStatus(@PathVariable("userId") Long userId,
+                                                             @PathVariable("eventId") Long eventId,
+                                                             @Valid @RequestBody EventRequestStatusUpdateRequest request) {
+        return requestService.updateEventRequestStatus(userId, eventId, request);
+    }
 }

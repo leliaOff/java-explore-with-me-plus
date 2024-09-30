@@ -1,10 +1,14 @@
 package ru.practicum.ewm.mappers;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewm.dto.eventRequest.ParticipationRequestDto;
 import ru.practicum.ewm.models.EventRequest;
 
+import java.util.List;
+
+@UtilityClass
 public class EventRequestMapper {
-    public static ParticipationRequestDto toDto(EventRequest model) {
+    public ParticipationRequestDto toDto(EventRequest model) {
         return new ParticipationRequestDto(
                 model.getId(),
                 model.getCreated(),
@@ -12,5 +16,9 @@ public class EventRequestMapper {
                 model.getRequester().getId(),
                 model.getStatus()
         );
+    }
+
+    public List<ParticipationRequestDto> toDto(List<EventRequest> models) {
+        return models.stream().map(EventRequestMapper::toDto).toList();
     }
 }

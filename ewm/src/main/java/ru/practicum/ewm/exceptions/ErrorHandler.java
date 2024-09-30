@@ -70,4 +70,26 @@ public class ErrorHandler {
                 .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
     }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error handleBadRequestException(final BadRequestException ex) {
+        return Error.builder()
+                .status(HttpStatus.NOT_FOUND)
+                .reason("Incorrectly made request.")
+                .message(ex.getMessage())
+                .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .build();
+    }
+
+    @ExceptionHandler({ConflictException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Error handleConflictException(final ConflictException ex) {
+        return Error.builder()
+                .status(HttpStatus.CONFLICT)
+                .reason("For the requested operation the conditions are not met.")
+                .message(ex.getMessage())
+                .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .build();
+    }
 }
