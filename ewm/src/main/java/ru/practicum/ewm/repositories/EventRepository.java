@@ -1,6 +1,7 @@
 package ru.practicum.ewm.repositories;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -27,6 +28,20 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     @Query("SELECT event FROM Event event WHERE event.id IN (:ids)")
     List<Event> findByIdIn(@Param("ids") Collection<Long> ids);
+
+    @Query("SELECT e FROM Event e " +
+            "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
+            "AND (:states IS NULL OR e.state IN :states) " +
+            "AND (:categories IS NULL OR e.category.id IN :categories)  AND" +
+            "(CAST(:rangeStart AS timestamp) IS NULL OR e.eventDate >= :rangeStart) AND"
+            + "(CAST(:rangeEnd AS timestamp) IS NULL OR e.eventDate <= :rangeEnd)")
+    List<Event> findAllByFilters(@Param("users") List<Long> users,
+                                 @Param("states") List<String> states,
+                                 @Param("categories") List<Long> categories,
+                                 @Param("rangeStart") LocalDateTime rangeStart,
+                                 @Param("rangeEnd") LocalDateTime rangeEnd,
+                                 Pageable pageable);
+
 
     interface EventSpecification {
         static Specification<Event> byText(String text) {
