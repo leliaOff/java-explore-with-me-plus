@@ -92,4 +92,14 @@ public class ErrorHandler {
                 .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
     }
+    @ExceptionHandler({ForbiddenException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Error handleForbiddenException(final ForbiddenException ex) {
+        return Error.builder()
+                .status(HttpStatus.FORBIDDEN)
+                .reason("For the requested operation the conditions are not met.")
+                .message(ex.getMessage())
+                .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .build();
+    }
 }
