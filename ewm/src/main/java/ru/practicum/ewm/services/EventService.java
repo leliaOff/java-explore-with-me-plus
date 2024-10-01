@@ -11,7 +11,6 @@ import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.enums.EventState;
-import ru.practicum.ewm.exceptions.ConflictException;
 import ru.practicum.ewm.exceptions.ForbiddenException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.EventMapper;
@@ -20,7 +19,6 @@ import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,8 +69,8 @@ public class EventService {
     public EventFullDto updatePrivateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventRequest) {
         Event oldEvent = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        oldEvent.setState(EventState.PUBLISHED);
-        return EventMapper.toDto(eventRepository.save(oldEvent), statEventService.getViews(oldEvent));
+        Event updatedEvent = EventMapper.mergeModel(oldEvent, updateEventRequest);
+        return EventMapper.toDto(eventRepository.save(updatedEvent), statEventService.getViews(oldEvent));
     }
 
     public EventFullDto find(Long eventId) {
