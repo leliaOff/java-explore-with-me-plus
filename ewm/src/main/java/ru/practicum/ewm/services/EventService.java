@@ -71,8 +71,8 @@ public class EventService {
     public EventFullDto updatePrivateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventRequest) {
         Event oldEvent = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        Event updatedEvent = EventMapper.mergeModel(oldEvent, updateEventRequest);
-        return EventMapper.toDto(eventRepository.save(updatedEvent), statEventService.getViews(oldEvent));
+        oldEvent.setState(EventState.PUBLISHED);
+        return EventMapper.toDto(eventRepository.save(oldEvent), statEventService.getViews(oldEvent));
     }
 
     public EventFullDto find(Long eventId) {
@@ -127,60 +127,15 @@ public class EventService {
     public EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest updateAdminRequest) {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-
-        if (updateAdminRequest.getEventDate() != null) {
-            LocalDateTime eventDate = updateAdminRequest.getEventDate();
-            if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
-                throw new ForbiddenException("Больше, чем за час");
-            }
-            oldEvent.setEventDate(eventDate);
-        }
         if (oldEvent.getState().equals(EventState.PUBLISHED)) {
-            throw new ForbiddenException("published");
+            throw new ForbiddenException("Event with id=" + eventId + " is PUBLISHED");
         }
         if (oldEvent.getState().equals(EventState.CANCELED)) {
-            throw new ForbiddenException("canceled");
+            throw new ForbiddenException("Event with id=" + eventId + " is CANCELED");
         }
-        if (updateAdminRequest.getTitle() != null) {
-            oldEvent.setTitle(updateAdminRequest.getTitle());
-        }
-        if (updateAdminRequest.getAnnotation() != null) {
-            oldEvent.setAnnotation(updateAdminRequest.getAnnotation());
-        }
-        if (updateAdminRequest.getCategory() != null) {
-            oldEvent.setCategory(categoryRepository.findById(updateAdminRequest.getCategory())
-                    .orElseThrow(() -> new NotFoundException("Категория с id=" + updateAdminRequest.getCategory() + " не найдена")));
-        }
-        if (updateAdminRequest.getDescription() != null) {
-            oldEvent.setDescription(updateAdminRequest.getDescription());
-        }
-        if (updateAdminRequest.getPaid() != null) {
-            oldEvent.setPaid(updateAdminRequest.getPaid());
-        }
-        if (updateAdminRequest.getParticipantLimit() != null) {
-            oldEvent.setParticipantLimit(updateAdminRequest.getParticipantLimit());
-        }
-        if (updateAdminRequest.getRequestModeration() != null) {
-            oldEvent.setRequestModeration(updateAdminRequest.getRequestModeration());
-        }
+        Event updatedEvent = EventMapper.mergeModel(oldEvent, updateAdminRequest);
 
-        if (updateAdminRequest.getStateAction() != null) {
-            switch (updateAdminRequest.getStateAction()) {
-                case PUBLISH_EVENT:
-                    oldEvent.setState(EventState.PUBLISHED);
-                    oldEvent.setPublishedOn(LocalDateTime.now());
-                    break;
-                case REJECT_EVENT:
-                    oldEvent.setState(EventState.CANCELED);
-                    break;
-                default:
-                    throw new ConflictException("Некорректное действие для события");
-            }
-        }
-
-        Event updatedEvent = eventRepository.save(oldEvent);
-
-        return EventMapper.toDto(updatedEvent, 0L);
+        return EventMapper.toDto(eventRepository.save(updatedEvent), 0L);
     }
 
 }

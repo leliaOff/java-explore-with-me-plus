@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.ewm.constraints.EventDateConstraintOrNull;
+import ru.practicum.ewm.dto.location.Location;
 import ru.practicum.ewm.enums.EventUserStateAction;
 
 import java.time.LocalDateTime;
@@ -32,4 +33,5 @@ public class UpdateEventUserRequest {
     private Integer participantLimit;
     private Boolean requestModeration;
     private EventUserStateAction stateAction;
+    private Location location;
 }
