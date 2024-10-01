@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.time.LocalDateTime;
 
-public class EventDateValidator implements ConstraintValidator<EventDateConstraint, LocalDateTime> {
+public class EventDateConstraintValidator implements ConstraintValidator<EventDateConstraint, LocalDateTime> {
     @Override
     public boolean isValid(LocalDateTime date, ConstraintValidatorContext context) {
         if (date == null) return false;

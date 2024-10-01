@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.ewm.constraints.EventDateConstraint;
+import ru.practicum.ewm.constraints.EventDateConstraintOrNull;
+import ru.practicum.ewm.dto.location.Location;
 import ru.practicum.ewm.enums.EventUserStateAction;
 
 import java.time.LocalDateTime;
@@ -25,11 +26,12 @@ public class UpdateEventUserRequest {
     @Length(min = 20, max = 7000)
     private String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @EventDateConstraint
+    @EventDateConstraintOrNull
     private LocalDateTime eventDate;
     private Boolean paid;
     @PositiveOrZero
     private Integer participantLimit;
     private Boolean requestModeration;
     private EventUserStateAction stateAction;
+    private Location location;
 }
