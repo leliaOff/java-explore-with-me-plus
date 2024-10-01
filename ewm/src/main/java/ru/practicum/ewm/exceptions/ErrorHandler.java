@@ -92,6 +92,7 @@ public class ErrorHandler {
                 .timestamp(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
     }
+
     @ExceptionHandler({ForbiddenException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Error handleForbiddenException(final ForbiddenException ex) {

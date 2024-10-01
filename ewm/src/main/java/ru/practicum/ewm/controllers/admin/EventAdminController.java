@@ -33,7 +33,7 @@ public class EventAdminController {
                 users,
                 states,
                 categories,
-                rangeStart ,
+                rangeStart,
                 rangeEnd,
                 from,
                 size
@@ -51,4 +51,5 @@ public class EventAdminController {
 
         log.info("Updating event with id={} for admin", eventId);
         return eventService.updateAdminEvent(eventId, updateEventAdminRequest);
-    }}
+    }
+}

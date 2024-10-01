@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.ewm.constraints.EventDateConstraint;
 import ru.practicum.ewm.constraints.EventDateConstraintOrNull;
 import ru.practicum.ewm.enums.EventUserStateAction;
 
