@@ -1,5 +1,6 @@
 package ru.practicum.ewm.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ import static ru.practicum.ewm.repositories.EventRepository.EventSpecification.*
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class EventService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
@@ -51,6 +54,7 @@ public class EventService {
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
         UserDto userDto = userService.getUser(userId);
         Event event = eventRepository.save(EventMapper.toModel(newEventDto, UserMapper.toModel(userDto)));
+        log.info("Added event: {}", event);
         return EventMapper.toDto(event, 0L);
     }
 
@@ -100,6 +104,8 @@ public class EventService {
 
 
     public List<EventFullDto> getAdminEvents(EventAdminFilterDto filter) {
+        log.info("Executing getAdminEvents with filter: {}", filter);
+
         Pageable pageable = PageRequest.of(filter.getFrom(), filter.getSize());
 
         List<Event> events = eventRepository.findAllByFilters(
@@ -110,6 +116,8 @@ public class EventService {
                 filter.getRangeEnd(),
                 pageable
         );
+        log.info("Events found: {}", events.size());
+
 
         return events.stream()
                 .map(EventMapper::toDtoWithoutViews)
@@ -121,15 +129,58 @@ public class EventService {
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
         if (updateAdminRequest.getEventDate() != null) {
-
             LocalDateTime eventDate = updateAdminRequest.getEventDate();
-
             if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
                 throw new ForbiddenException("Больше, чем за час");
             }
-
+            oldEvent.setEventDate(eventDate);
         }
-        return null;
+        if (oldEvent.getState().equals(EventState.PUBLISHED)) {
+            throw new ForbiddenException("published");
+        }
+        if (oldEvent.getState().equals(EventState.CANCELED)) {
+            throw new ForbiddenException("canceled");
+        }
+        if (updateAdminRequest.getTitle() != null) {
+            oldEvent.setTitle(updateAdminRequest.getTitle());
+        }
+        if (updateAdminRequest.getAnnotation() != null) {
+            oldEvent.setAnnotation(updateAdminRequest.getAnnotation());
+        }
+        if (updateAdminRequest.getCategory() != null) {
+            oldEvent.setCategory(categoryRepository.findById(updateAdminRequest.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Категория с id=" + updateAdminRequest.getCategory() + " не найдена")));
+        }
+        if (updateAdminRequest.getDescription() != null) {
+            oldEvent.setDescription(updateAdminRequest.getDescription());
+        }
+        if (updateAdminRequest.getPaid() != null) {
+            oldEvent.setPaid(updateAdminRequest.getPaid());
+        }
+        if (updateAdminRequest.getParticipantLimit() != null) {
+            oldEvent.setParticipantLimit(updateAdminRequest.getParticipantLimit());
+        }
+        if (updateAdminRequest.getRequestModeration() != null) {
+            oldEvent.setRequestModeration(updateAdminRequest.getRequestModeration());
+        }
+
+        if (updateAdminRequest.getStateAction() != null) {
+            switch (updateAdminRequest.getStateAction()) {
+                case PUBLISH_EVENT:
+                    oldEvent.setState(EventState.PUBLISHED);
+                    oldEvent.setPublishedOn(LocalDateTime.now());
+                    break;
+                case REJECT_EVENT:
+                    oldEvent.setState(EventState.CANCELED);
+                    break;
+                default:
+                    throw new ConflictException("Некорректное действие для события");
+            }
+        }
+
+        Event updatedEvent = eventRepository.save(oldEvent);
+
+        return EventMapper.toDto(updatedEvent, 0L);
     }
 
 }

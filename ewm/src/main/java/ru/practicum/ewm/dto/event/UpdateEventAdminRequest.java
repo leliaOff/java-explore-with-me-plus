@@ -3,7 +3,9 @@ package ru.practicum.ewm.dto.event;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.ewm.enums.EventAdminStateAction;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UpdateEventAdminRequest {
     private String title;
     private String annotation;

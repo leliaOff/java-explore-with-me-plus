@@ -3,12 +3,10 @@ package ru.practicum.ewm.controllers.admin;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.event.EventAdminFilterDto;
 import ru.practicum.ewm.dto.event.EventFullDto;
+import ru.practicum.ewm.dto.event.UpdateEventAdminRequest;
 import ru.practicum.ewm.services.EventService;
 
 import java.time.LocalDateTime;
@@ -45,4 +43,12 @@ public class EventAdminController {
         log.info("getting admin events for {}", dto);
         return eventService.getAdminEvents(filterDto);
     }
-}
+
+    @PatchMapping("/{eventId}")
+    public EventFullDto updateEventForAdmin(
+            @PathVariable Long eventId,
+            @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
+
+        log.info("Updating event with id={} for admin", eventId);
+        return eventService.updateAdminEvent(eventId, updateEventAdminRequest);
+    }}
