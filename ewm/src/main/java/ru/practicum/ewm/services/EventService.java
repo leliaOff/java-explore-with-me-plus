@@ -67,7 +67,7 @@ public class EventService {
     public EventFullDto updatePrivateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventRequest) {
         Event oldEvent = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        if(!oldEvent.getState().equals(EventState.CANCELED) && !oldEvent.getState().equals(EventState.PENDING)){
+        if (!oldEvent.getState().equals(EventState.CANCELED) && !oldEvent.getState().equals(EventState.PENDING)) {
             throw new ConflictException("Event with id=" + eventId + " cannot be updated");
         }
         Event updatedEvent = EventMapper.mergeModel(oldEvent, updateEventRequest);
