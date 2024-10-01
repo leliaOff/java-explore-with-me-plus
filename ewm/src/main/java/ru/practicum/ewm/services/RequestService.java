@@ -49,12 +49,16 @@ public class RequestService {
         }
 
         int requestsSize = requestRepository.findAllByEventId(eventId).size();
-        if (event.getParticipantLimit() < requestsSize) {
+        if (event.getParticipantLimit() <= requestsSize) {
             throw new InvalidDataException("Participant limit exceeded");
         }
 
         EventRequest eventRequest = new EventRequest(null, event, user, LocalDateTime.now(), EventRequestStatus.PENDING);
         if (!event.getRequestModeration()) {
+            eventRequest.setStatus(EventRequestStatus.CONFIRMED);
+        }
+
+        if (event.getParticipantLimit() != null && event.getParticipantLimit() == 0) {
             eventRequest.setStatus(EventRequestStatus.CONFIRMED);
         }
 
@@ -105,11 +109,14 @@ public class RequestService {
         List<EventRequest> requestUpdateList = eventRequests.stream()
                 .filter(eventRequest -> updateRequest.getRequestIds().contains(eventRequest.getId())).toList();
         requestUpdateList.forEach(eventRequest -> {
+            if (eventRequest.getStatus().equals(EventRequestStatus.CONFIRMED)) {
+                throw new ConflictException("Request can't REJECT confirmed request");
+            }
             if (!eventRequest.getStatus().equals(EventRequestStatus.PENDING)) {
                 throw new BadRequestException("Request must have status PENDING");
             }
 
-            if (event.getConfirmedRequests() != null && (event.getConfirmedRequests() > event.getParticipantLimit())) {
+            if (event.getConfirmedRequests() != null && (event.getConfirmedRequests() >= event.getParticipantLimit())) {
                 eventRequest.setStatus(EventRequestStatus.REJECTED);
                 updateResult.getRejectedRequests().add(EventRequestMapper.toDto(eventRequest));
                 requestRepository.save(eventRequest);
@@ -122,7 +129,7 @@ public class RequestService {
                 updateResult.getConfirmedRequests().add(EventRequestMapper.toDto(eventRequest));
             }
             requestRepository.save(eventRequest);
-            event.setConfirmedRequests(event.getConfirmedRequests() == null ? 0 : event.getConfirmedRequests() + 1);
+            event.setConfirmedRequests(event.getConfirmedRequests() == null ? 1 : event.getConfirmedRequests() + 1);
         });
         eventRepository.save(event);
         return updateResult;
