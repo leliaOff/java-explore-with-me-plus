@@ -21,7 +21,6 @@ import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -124,6 +123,7 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public EventFullDto updateAdminEvent(Long eventId,UpdateEventAdminRequest updateAdminRequest) {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));

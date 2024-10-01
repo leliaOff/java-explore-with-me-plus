@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.ewm.models.Category;
-import ru.practicum.ewm.models.Event;
 
 import java.util.Collection;
 import java.util.List;

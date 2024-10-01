@@ -6,7 +6,6 @@ import ru.practicum.ewm.dto.eventRequest.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.eventRequest.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.eventRequest.ParticipationRequestDto;
 import ru.practicum.ewm.enums.EventRequestStatus;
-import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.exceptions.BadRequestException;
 import ru.practicum.ewm.exceptions.ConflictException;
 import ru.practicum.ewm.exceptions.InvalidDataException;
@@ -77,6 +76,7 @@ public class RequestService {
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
     }
 
+    @Transactional
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         EventRequest request = requestRepository.findByRequesterIdAndId(userId, requestId)
                 .orElseThrow(() -> new NotFoundException("Request with id=" + requestId + " was not found"));
@@ -88,6 +88,7 @@ public class RequestService {
         return EventRequestMapper.toDto(requestRepository.findAllByEventIdWithInitiatorId(eventId, userId));
     }
 
+    @Transactional
     public EventRequestStatusUpdateResult updateEventRequestStatus(Long userId, Long eventId,
                                                                    EventRequestStatusUpdateRequest updateRequest) {
         Event event = getEvent(eventId);
@@ -104,19 +105,24 @@ public class RequestService {
         List<EventRequest> requestUpdateList = eventRequests.stream()
                 .filter(eventRequest -> updateRequest.getRequestIds().contains(eventRequest.getId())).toList();
         requestUpdateList.forEach(eventRequest -> {
-            if (!eventRequest.getEvent().getState().equals(EventState.PENDING)) {
+            if (!eventRequest.getStatus().equals(EventRequestStatus.PENDING)) {
                 throw new BadRequestException("Request must have status PENDING");
             }
-            if (event.getConfirmedRequests() > event.getParticipantLimit()) {
+
+            if (event.getConfirmedRequests() != null && (event.getConfirmedRequests() > event.getParticipantLimit())) {
                 eventRequest.setStatus(EventRequestStatus.REJECTED);
                 updateResult.getRejectedRequests().add(EventRequestMapper.toDto(eventRequest));
                 requestRepository.save(eventRequest);
                 throw new ConflictException("The participant limit has been reached");
             }
             eventRequest.setStatus(updateRequest.getStatus());
-            updateResult.getConfirmedRequests().add(EventRequestMapper.toDto(eventRequest));
+            if (updateRequest.getStatus().equals(EventRequestStatus.REJECTED)) {
+                updateResult.getRejectedRequests().add(EventRequestMapper.toDto(eventRequest));
+            } else {
+                updateResult.getConfirmedRequests().add(EventRequestMapper.toDto(eventRequest));
+            }
             requestRepository.save(eventRequest);
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+            event.setConfirmedRequests(event.getConfirmedRequests() == null ? 0 : event.getConfirmedRequests() + 1);
         });
         eventRepository.save(event);
         return updateResult;

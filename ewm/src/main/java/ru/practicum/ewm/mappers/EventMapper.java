@@ -1,10 +1,8 @@
 package ru.practicum.ewm.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.ewm.dto.category.CategoryDto;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.location.Location;
-import ru.practicum.ewm.dto.user.UserShortDto;
 import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.enums.EventUserStateAction;
 import ru.practicum.ewm.exceptions.InvalidDataException;
@@ -53,7 +51,6 @@ public class EventMapper {
     }
 
 
-
     public Event toModel(NewEventDto dto, User user) {
         Event model = new Event();
         model.setTitle(dto.getTitle());
@@ -70,6 +67,7 @@ public class EventMapper {
         model.setCreatedOn(LocalDateTime.now());
         return model;
     }
+
     public EventFullDto toDtoWithoutViews(Event model) {
         return new EventFullDto(
                 model.getId(),
