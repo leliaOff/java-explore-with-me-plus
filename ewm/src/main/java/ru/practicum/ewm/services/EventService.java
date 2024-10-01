@@ -124,6 +124,7 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest updateAdminRequest) {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
