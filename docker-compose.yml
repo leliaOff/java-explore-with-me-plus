@@ -30,7 +30,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-ewm-main-db:5432/ewm-main
-      - STATS_SERVER_URL=http://stats-server:9090
+      - STAT_SERVER_URL=http://stats-server:9090
   ewm-db:
     image: postgres:16.1
     container_name: postgres-ewm-main-db
