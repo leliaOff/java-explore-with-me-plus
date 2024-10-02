@@ -26,10 +26,10 @@ public class UserService {
 
     @Transactional
     public UserDto addUser(NewUserRequest userRequest) {
-        User user = userRepository.save(UserMapper.toModel(userRequest));
         if (userRepository.existsByEmail(userRequest.getEmail())) {
             throw new InvalidDataException("email already exists");
         }
+        User user = userRepository.save(UserMapper.toModel(userRequest));
         return UserMapper.toDto(user);
     }
 
