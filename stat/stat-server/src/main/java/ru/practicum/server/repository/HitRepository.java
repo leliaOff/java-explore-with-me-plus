@@ -14,7 +14,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
     @Query("SELECT new ru.practicum.server.model.Stat(hit.app, hit.uri, count(hit.id))" +
             "FROM Hit as hit " +
             "WHERE hit.timestamp >= :start " +
-            "AND hit.timestamp < :end " +
+            "AND hit.timestamp <= :end " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")
     List<Stat> getStat(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
@@ -22,7 +22,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
     @Query("SELECT new ru.practicum.server.model.Stat(hit.app, hit.uri, count(hit.id))" +
             "FROM Hit as hit " +
             "WHERE hit.timestamp >= :start " +
-            "AND hit.timestamp < :end " +
+            "AND hit.timestamp <= :end " +
             "AND hit.uri IN :uris " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")
@@ -31,7 +31,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
     @Query("SELECT new ru.practicum.server.model.Stat(hit.app, hit.uri, count(DISTINCT hit.ip))" +
             "FROM Hit as hit " +
             "WHERE hit.timestamp >= :start " +
-            "AND hit.timestamp < :end " +
+            "AND hit.timestamp <= :end " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")
     List<Stat> getUniqueStat(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
@@ -39,7 +39,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
     @Query("SELECT new ru.practicum.server.model.Stat(hit.app, hit.uri, count(DISTINCT hit.ip))" +
             "FROM Hit as hit " +
             "WHERE hit.timestamp >= :start " +
-            "AND hit.timestamp < :end " +
+            "AND hit.timestamp <= :end " +
             "AND hit.uri IN :uris " +
             "group by hit.app, hit.uri " +
             "order by count(hit.id) desc")

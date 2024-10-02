@@ -28,7 +28,7 @@ public class Event {
     private Category category;
 
     @Column(name = "confirmed_requests")
-    private Integer confirmedRequests;
+    private Integer confirmedRequests = 0;
 
     @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn;

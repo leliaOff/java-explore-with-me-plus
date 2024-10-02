@@ -49,7 +49,7 @@ public class RequestService {
         }
 
         int requestsSize = requestRepository.findAllByEventId(eventId).size();
-        if (event.getParticipantLimit() <= requestsSize) {
+        if (event.getParticipantLimit() > 0 && event.getParticipantLimit() <= requestsSize) {
             throw new InvalidDataException("Participant limit exceeded");
         }
 

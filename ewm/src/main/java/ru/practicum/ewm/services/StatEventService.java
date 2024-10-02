@@ -37,7 +37,7 @@ public class StatEventService {
                 getStartDate(event),
                 getEndDate(),
                 getEventUris(event),
-                false
+                true
         );
         if (stats.isEmpty()) {
             return 0L;
@@ -55,7 +55,7 @@ public class StatEventService {
                 getStartDate(events),
                 getEndDate(),
                 getEventUris(events),
-                false
+                true
         );
         if (stats.isEmpty()) {
             return stats;
