@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.practicum.ewm.dto.user.NewUserRequest;
 import ru.practicum.ewm.dto.user.UserDto;
-import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.UserMapper;
 import ru.practicum.ewm.models.User;
@@ -26,9 +25,6 @@ public class UserService {
 
     @Transactional
     public UserDto addUser(NewUserRequest userRequest) {
-        if (userRepository.existsByEmail(userRequest.getEmail())) {
-            throw new InvalidDataException("email already exists");
-        }
         User user = userRepository.save(UserMapper.toModel(userRequest));
         return UserMapper.toDto(user);
     }
