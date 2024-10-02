@@ -84,7 +84,7 @@ public class RequestService {
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         EventRequest request = requestRepository.findByRequesterIdAndId(userId, requestId)
                 .orElseThrow(() -> new NotFoundException("Request with id=" + requestId + " was not found"));
-        request.setStatus(EventRequestStatus.CANCELLED);
+        request.setStatus(EventRequestStatus.CANCELED);
         return EventRequestMapper.toDto(requestRepository.save(request));
     }
 

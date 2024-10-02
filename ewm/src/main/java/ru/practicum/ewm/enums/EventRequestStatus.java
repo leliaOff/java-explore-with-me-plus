@@ -1,5 +1,5 @@
 package ru.practicum.ewm.enums;
 
 public enum EventRequestStatus {
-    PENDING, CONFIRMED, REJECTED, CANCELLED
+    PENDING, CONFIRMED, REJECTED, CANCELED
 }

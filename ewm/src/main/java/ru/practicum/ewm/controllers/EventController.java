@@ -2,6 +2,7 @@ package ru.practicum.ewm.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.event.EventFilterDto;
 import ru.practicum.ewm.dto.event.EventFullDto;
@@ -25,8 +26,8 @@ public class EventController {
     public Collection<EventShortDto> getEvents(@RequestParam(required = false) String text,
                                                @RequestParam(required = false) List<Long> categories,
                                                @RequestParam(required = false) Boolean paid,
-                                               @RequestParam(required = false) LocalDateTime rangeStart,
-                                               @RequestParam(required = false) LocalDateTime rangeEnd,
+                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                                @RequestParam(required = false) Boolean onlyAvailable,
                                                @RequestParam(defaultValue = "EVENT_DATE") EventSort sort,
                                                @RequestParam(defaultValue = "0") Integer from,

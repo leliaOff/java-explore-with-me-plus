@@ -46,6 +46,9 @@ public class StatEventService {
     }
 
     public HashMap<Long, Long> getViews(Collection<Event> events) {
+        if (events == null || events.isEmpty()) {
+            return new HashMap<>();
+        }
         HashMap<Long, Long> stats = getStatsSkeleton(events);
         HashMap<String, Long> urisMap = getUrisMap(events);
         if (events.isEmpty()) {

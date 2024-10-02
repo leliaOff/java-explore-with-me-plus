@@ -94,7 +94,10 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
                 if (onlyAvailable == null) {
                     return null;
                 }
-                return criteriaBuilder.equal(root.get("onlyAvailable"), onlyAvailable);
+                return criteriaBuilder.or(
+                        criteriaBuilder.greaterThan(root.get("participantLimit"), root.get("confirmedRequests")),
+                        criteriaBuilder.equal(root.get("participantLimit"), 0)
+                );
             });
         }
 
