@@ -24,8 +24,7 @@ public class StatService {
     }
 
     public Collection<StatDto> get(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (end.isBefore(start))
-        {
+        if (end.isBefore(start)) {
             throw new BadRequestException("end must be after start");
         }
         if (unique) {
