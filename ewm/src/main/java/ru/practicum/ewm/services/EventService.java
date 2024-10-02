@@ -87,7 +87,7 @@ public class EventService {
 
     public Collection<EventShortDto> getEvents(EventFilterDto filter, EventSort sort, Integer from, Integer size) {
         List<Category> categories = categoryRepository.findByIdIn(filter.getCategories());
-        if (filter.getCategories().size() != categories.size()) {
+        if (filter.getCategories() != null && filter.getCategories().size() != categories.size()) {
             throw new BadRequestException("One or more categories not found");
         }
         Specification<Event> specification = byText(filter.getText())
