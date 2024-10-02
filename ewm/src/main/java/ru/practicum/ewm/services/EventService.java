@@ -20,7 +20,10 @@ import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.repositories.EventRepository.EventSpecification.*;
