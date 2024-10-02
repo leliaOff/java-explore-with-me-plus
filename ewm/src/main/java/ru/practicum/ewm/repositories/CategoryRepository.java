@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByNameAndIdNot(String name, Long id);
+    boolean existsByName(String name);
 
     @Query("SELECT category FROM Category category WHERE category.id IN (:ids)")
     List<Category> findByIdIn(@Param("ids") Collection<Long> ids);

@@ -39,7 +39,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         Collection<Event> events = eventRepository.findByIdIn(newCompilationDto.getEvents());
-        if (newCompilationDto.getEvents().size() != events.size()) {
+        if (newCompilationDto.getEvents() != null && newCompilationDto.getEvents().size() != events.size()) {
             throw new InvalidDataException("One or more events not found");
         }
         Compilation compilation = CompilationMapper.toModel(newCompilationDto, events);
@@ -58,7 +58,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto updateCompilation(UpdateCompilationRequest updateCompilationRequest, Long compilationId) {
         Collection<Event> events = eventRepository.findByIdIn(updateCompilationRequest.getEvents());
-        if (updateCompilationRequest.getEvents().size() != events.size()) {
+        if (updateCompilationRequest.getEvents() != null && updateCompilationRequest.getEvents().size() != events.size()) {
             throw new InvalidDataException("One or more events not found");
         }
         Compilation currentCompilation = compilationRepository.findById(compilationId).orElseThrow(() -> new NotFoundException("Compilation not found"));

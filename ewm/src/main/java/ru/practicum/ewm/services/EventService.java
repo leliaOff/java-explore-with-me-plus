@@ -7,15 +7,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.enums.EventState;
-import ru.practicum.ewm.exceptions.ConflictException;
-import ru.practicum.ewm.exceptions.ForbiddenException;
-import ru.practicum.ewm.exceptions.NotFoundException;
+import ru.practicum.ewm.exceptions.*;
 import ru.practicum.ewm.mappers.EventMapper;
 import ru.practicum.ewm.mappers.UserMapper;
+import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.repositories.EventRepository;
@@ -84,8 +84,12 @@ public class EventService {
     }
 
     public Collection<EventShortDto> getEvents(EventFilterDto filter, EventSort sort, Integer from, Integer size) {
+        List<Category> categories = categoryRepository.findByIdIn(filter.getCategories());
+        if (filter.getCategories().size() != categories.size()) {
+            throw new BadRequestException("One or more categories not found");
+        }
         Specification<Event> specification = byText(filter.getText())
-                .and(byCategories(categoryRepository.findByIdIn(filter.getCategories())))
+                .and(byCategories(categories))
                 .and(byPaid(filter.getPaid()))
                 .and(byRangeStart(filter.getRangeStart()))
                 .and(byRangeEnd(filter.getRangeEnd()))
@@ -131,10 +135,10 @@ public class EventService {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         if (oldEvent.getState().equals(EventState.PUBLISHED)) {
-            throw new ForbiddenException("Event with id=" + eventId + " is PUBLISHED");
+            throw new InvalidDataException("Event with id=" + eventId + " is PUBLISHED");
         }
         if (oldEvent.getState().equals(EventState.CANCELED)) {
-            throw new ForbiddenException("Event with id=" + eventId + " is CANCELED");
+            throw new InvalidDataException("Event with id=" + eventId + " is CANCELED");
         }
         Event updatedEvent = EventMapper.mergeModel(oldEvent, updateAdminRequest);
 

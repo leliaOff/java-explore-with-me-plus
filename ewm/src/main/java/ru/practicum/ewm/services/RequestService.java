@@ -49,7 +49,7 @@ public class RequestService {
         }
 
         int requestsSize = requestRepository.findAllByEventId(eventId).size();
-        if (event.getParticipantLimit() > 0 && event.getParticipantLimit() <= requestsSize) {
+        if (event.getParticipantLimit() > 0 && !event.getRequestModeration() && event.getParticipantLimit() <= requestsSize) {
             throw new InvalidDataException("Participant limit exceeded");
         }
 
@@ -97,7 +97,7 @@ public class RequestService {
                                                                    EventRequestStatusUpdateRequest updateRequest) {
         Event event = getEvent(eventId);
         EventRequestStatusUpdateResult updateResult = new EventRequestStatusUpdateResult();
-        if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
+        if (event.getParticipantLimit() == 0) {
             return updateResult;
         }
 
