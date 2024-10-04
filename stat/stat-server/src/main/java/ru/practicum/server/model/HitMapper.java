@@ -5,7 +5,7 @@ import ru.practicum.dto.HitDto;
 
 @UtilityClass
 public class HitMapper {
-    public static HitDto toHitDto(Hit hit) {
+    public HitDto toHitDto(Hit hit) {
         HitDto hitDto = new HitDto();
         hitDto.setId(hit.getId());
         hitDto.setApp(hit.getApp());
@@ -16,7 +16,7 @@ public class HitMapper {
         return hitDto;
     }
 
-    public static Hit toHit(HitDto hitDto) {
+    public Hit toHit(HitDto hitDto) {
         Hit hit = new Hit();
         hit.setId(hitDto.getId());
         hit.setApp(hitDto.getApp());

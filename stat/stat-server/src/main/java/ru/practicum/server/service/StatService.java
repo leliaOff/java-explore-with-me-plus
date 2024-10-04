@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.StatDto;
+import ru.practicum.server.exceptions.BadRequestException;
 import ru.practicum.server.model.StatMapper;
 import ru.practicum.server.repository.HitRepository;
 
@@ -23,6 +24,9 @@ public class StatService {
     }
 
     public Collection<StatDto> get(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (end.isBefore(start)) {
+            throw new BadRequestException("end must be after start");
+        }
         if (unique) {
             if (uris == null) {
                 return repository.getUniqueStat(start, end).stream().map(StatMapper::toDto).collect(Collectors.toList());
@@ -32,6 +36,7 @@ public class StatService {
         if (uris == null) {
             return repository.getStat(start, end).stream().map(StatMapper::toDto).collect(Collectors.toList());
         }
+        List<StatDto> stats = repository.getStat(start, end, uris).stream().map(StatMapper::toDto).collect(Collectors.toList());
         return repository.getStat(start, end, uris).stream().map(StatMapper::toDto).collect(Collectors.toList());
     }
 }

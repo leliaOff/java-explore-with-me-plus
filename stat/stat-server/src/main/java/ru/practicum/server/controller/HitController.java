@@ -1,10 +1,8 @@
 package ru.practicum.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.HitDto;
 import ru.practicum.server.service.HitService;
 
@@ -19,6 +17,7 @@ public class HitController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public HitDto create(@RequestBody HitDto dto) {
         return hitService.create(dto);
     }
