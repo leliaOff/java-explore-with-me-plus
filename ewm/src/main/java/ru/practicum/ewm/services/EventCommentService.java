@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.eventComment.*;
 import ru.practicum.ewm.enums.EventCommentStatus;
+import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.exceptions.BadRequestException;
+import ru.practicum.ewm.exceptions.ForbiddenException;
+import ru.practicum.ewm.exceptions.InvalidDataException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.EventCommentMapper;
 import ru.practicum.ewm.models.Event;
@@ -17,7 +20,6 @@ import ru.practicum.ewm.repositories.EventCommentRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.repositories.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,8 +80,8 @@ public class EventCommentService {
     public EventCommentPrivateDto create(Long userId, CreateCommentRequest request) {
         User author = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new NotFoundException("Event not found"));
-        if (event.getEventDate().isAfter(LocalDateTime.now())) {
-            throw new BadRequestException("The event has not started yet");
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new InvalidDataException("Event not published");
         }
         EventComment comment = eventCommentRepository.save(EventCommentMapper.toModel(request, author, event));
         return EventCommentMapper.toPrivateDto(comment);
@@ -90,7 +92,7 @@ public class EventCommentService {
     public EventCommentPrivateDto update(Long userId, Long commentId, UpdateCommentRequest request) {
         EventComment comment = find(commentId);
         if (!comment.getAuthor().getId().equals(userId)) {
-            throw new BadRequestException("No access to comment");
+            throw new ForbiddenException("No access to comment");
         }
         if (!comment.getStatus().equals(EventCommentStatus.PENDING)) {
             throw new BadRequestException("The comment must be in draft");
@@ -111,7 +113,7 @@ public class EventCommentService {
     public void delete(Long userId, Long commentId) {
         EventComment comment = find(commentId);
         if (!comment.getAuthor().getId().equals(userId)) {
-            throw new BadRequestException("No access to comment");
+            throw new ForbiddenException("No access to comment");
         }
         if (!comment.getStatus().equals(EventCommentStatus.PENDING)) {
             throw new BadRequestException("The comment must be in draft");
