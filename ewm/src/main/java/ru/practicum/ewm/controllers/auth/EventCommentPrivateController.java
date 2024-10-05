@@ -29,7 +29,7 @@ public class EventCommentPrivateController {
                                      @RequestParam(required = false) Long eventId,
                                      @RequestParam(defaultValue = "10") Integer size,
                                      @RequestParam(defaultValue = "0") Integer from) {
-        return eventCommentService.get(userId, eventId, size, from);
+        return eventCommentService.getComments(userId, eventId, size, from);
     }
 
     @PostMapping
