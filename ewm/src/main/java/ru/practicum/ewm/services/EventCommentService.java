@@ -5,10 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.dto.eventComment.CreateCommentRequest;
-import ru.practicum.ewm.dto.eventComment.EventCommentDto;
-import ru.practicum.ewm.dto.eventComment.EventCommentPrivateDto;
-import ru.practicum.ewm.dto.eventComment.UpdateCommentRequest;
+import ru.practicum.ewm.dto.eventComment.*;
 import ru.practicum.ewm.enums.EventCommentStatus;
 import ru.practicum.ewm.exceptions.BadRequestException;
 import ru.practicum.ewm.exceptions.NotFoundException;
@@ -53,6 +50,18 @@ public class EventCommentService {
                 .collect(Collectors.toList());
     }
 
+    public List<EventCommentPrivateDto> getComments(Long eventId, Integer size, Integer from) {
+        PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "created"));
+        if (eventId != null) {
+            return eventCommentRepository.findAllByEventId(eventId, pageRequest).stream()
+                    .map(EventCommentMapper::toPrivateDto)
+                    .collect(Collectors.toList());
+        }
+        return eventCommentRepository.findAll(pageRequest).stream()
+                .map(EventCommentMapper::toPrivateDto)
+                .collect(Collectors.toList());
+    }
+
     public List<EventCommentDto> getPublishedComments(Long eventId, Integer size, Integer from) {
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "created"));
         return eventCommentRepository.findAllByEventIdAndStatus(eventId, EventCommentStatus.PUBLISHED, pageRequest).stream()
@@ -86,6 +95,14 @@ public class EventCommentService {
         if (!comment.getStatus().equals(EventCommentStatus.PENDING)) {
             throw new BadRequestException("The comment must be in draft");
         }
+        comment = eventCommentRepository.save(EventCommentMapper.mergeModel(request, comment));
+        return EventCommentMapper.toPrivateDto(comment);
+    }
+
+
+    @Transactional
+    public EventCommentPrivateDto update(Long commentId, UpdateCommentAdminRequest request) {
+        EventComment comment = find(commentId);
         comment = eventCommentRepository.save(EventCommentMapper.mergeModel(request, comment));
         return EventCommentMapper.toPrivateDto(comment);
     }
