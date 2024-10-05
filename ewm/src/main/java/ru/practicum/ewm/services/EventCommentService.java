@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.eventComment.CreateCommentRequest;
+import ru.practicum.ewm.dto.eventComment.EventCommentDto;
 import ru.practicum.ewm.dto.eventComment.EventCommentPrivateDto;
 import ru.practicum.ewm.dto.eventComment.UpdateCommentRequest;
 import ru.practicum.ewm.enums.EventCommentStatus;
@@ -40,7 +41,7 @@ public class EventCommentService {
         this.eventCommentRepository = eventCommentRepository;
     }
 
-    public List<EventCommentPrivateDto> get(Long userId, Long eventId, Integer size, Integer from) {
+    public List<EventCommentPrivateDto> getComments(Long userId, Long eventId, Integer size, Integer from) {
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "created"));
         if (eventId != null) {
             return eventCommentRepository.findAllByAuthorIdAndEventId(userId, eventId, pageRequest).stream()
@@ -49,6 +50,13 @@ public class EventCommentService {
         }
         return eventCommentRepository.findAllByAuthorId(userId, pageRequest).stream()
                 .map(EventCommentMapper::toPrivateDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<EventCommentDto> getPublishedComments(Long eventId, Integer size, Integer from) {
+        PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "created"));
+        return eventCommentRepository.findAllByEventIdAndStatus(eventId, EventCommentStatus.PUBLISHED, pageRequest).stream()
+                .map(EventCommentMapper::toDto)
                 .collect(Collectors.toList());
     }
 
