@@ -15,6 +15,5 @@ public class CreateCommentRequest {
     @NotBlank
     @Length(min = 1, max = 7000)
     private String text;
-    @NotBlank
     private Long eventId;
 }
