@@ -20,7 +20,6 @@ import ru.practicum.ewm.repositories.EventCommentRepository;
 import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.repositories.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 

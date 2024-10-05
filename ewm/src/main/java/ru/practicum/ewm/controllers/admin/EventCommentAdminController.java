@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.dto.eventComment.CreateCommentRequest;
 import ru.practicum.ewm.dto.eventComment.EventCommentPrivateDto;
 import ru.practicum.ewm.dto.eventComment.UpdateCommentAdminRequest;
-import ru.practicum.ewm.dto.eventComment.UpdateCommentRequest;
 import ru.practicum.ewm.services.EventCommentService;
 
 import java.util.List;
