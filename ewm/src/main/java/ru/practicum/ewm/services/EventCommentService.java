@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.eventComment.*;
 import ru.practicum.ewm.enums.EventCommentStatus;
+import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.exceptions.BadRequestException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.mappers.EventCommentMapper;
@@ -78,8 +79,8 @@ public class EventCommentService {
     public EventCommentPrivateDto create(Long userId, CreateCommentRequest request) {
         User author = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new NotFoundException("Event not found"));
-        if (event.getEventDate().isAfter(LocalDateTime.now())) {
-            throw new BadRequestException("The event has not started yet");
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new BadRequestException("Event not published");
         }
         EventComment comment = eventCommentRepository.save(EventCommentMapper.toModel(request, author, event));
         return EventCommentMapper.toPrivateDto(comment);
